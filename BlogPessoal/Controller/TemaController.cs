@@ -1,10 +1,12 @@
 ﻿using blogpessoal.Model;
 using blogpessoal.Service;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace blogpessoal.Controller
 {
+    [Authorize]
     [Route("~/temas")]
     [ApiController]
     public class TemaController : ControllerBase
@@ -79,12 +81,12 @@ namespace blogpessoal.Controller
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete(int id)
         {
             var BuscaTema = await _temaService.GetById(id);
 
             if (BuscaTema is null)
-                return NotFound("Tema não encontrado!");
+                return NotFound();
 
             await _temaService.Delete(BuscaTema);
 

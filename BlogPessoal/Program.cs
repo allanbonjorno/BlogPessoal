@@ -5,6 +5,12 @@ using blogpessoal.Service;
 using blogpessoal.Validator;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using blogpessoal.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using blogpessoal.Security.Implements;
+using BlogPessoal.Security;
 using BlogPessoal.Service;
 using BlogPessoal.Validator;
 
@@ -23,6 +29,7 @@ namespace blogpessoal
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                 }
             );
 
@@ -37,10 +44,32 @@ namespace blogpessoal
             // Validação das Entidades
             builder.Services.AddTransient<IValidator<Postagem>, PostagemValidator>();
             builder.Services.AddTransient<IValidator<Tema>, TemaValidator>();
+            builder.Services.AddTransient<IValidator<User>, UserValidator>();
 
             // Registrar as Classes e Interfaces Service
             builder.Services.AddScoped<IPostagemService, PostagemService>();
             builder.Services.AddScoped<ITemaService, TemaService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
+
+            // Validação do Token
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                var key = Encoding.UTF8.GetBytes(Settings.Secret);
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
 
             // Learn more about configuring Swagger/OpenAPI
             // at https://aka.ms/aspnetcore/swashbuckle
@@ -78,14 +107,20 @@ namespace blogpessoal
                 app.UseSwaggerUI();
             }
 
+            //Habilitar CORS
+
             app.UseCors("MyPolicy");
+
+            // Habilitar a Autenticação e a Autorização
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
+            // Habilitar Controller
             app.MapControllers();
 
             app.Run();
         }
     }
 }
-
