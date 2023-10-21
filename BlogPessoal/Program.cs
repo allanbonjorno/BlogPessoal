@@ -106,14 +106,14 @@ namespace blogpessoal
                     Description = "Projeto Blog Pessoal - ASP.NET Core 7.0",
                     Contact = new OpenApiContact
                     {
-                        Name = "Rafael Queiróz",
-                        Email = "rafaelproinfo@gmail.com",
-                        Url = new Uri("https://github.com/rafaelq80")
+                        Name = "Allan Bonjorno de Carvalho",
+                        Email = "allanbonjorno@outlook.com",
+                        Url = new Uri("https://github.com/allanbonjorno/")
                     },
                     License = new OpenApiLicense
                     {
                         Name = "Github",
-                        Url = new Uri("https://github.com/rafaelq80")
+                        Url = new Uri("https://github.com/allanbonjorno/")
                     }
                 });
 
