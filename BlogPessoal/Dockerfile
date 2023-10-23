@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-ENV ASPNETCORE_URLS http://%2A/
+ENV ASPNETCORE_URLS http://*:80
 WORKDIR /app
 EXPOSE 80
 
